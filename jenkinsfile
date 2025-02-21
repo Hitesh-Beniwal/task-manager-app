@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        NODEJS_HOME = "/usr/local/bin/node" // Update this path if needed
+        PATH = "${NODEJS_HOME}:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Hitesh-Beniwal/task-manager-app.git'
+            }
+        }
+
+        stage('Install Dependencies - Backend') {
+            steps {
+                dir('backend') {
+                    bat 'npm install'
+                }
+            }
+        }
+
+        stage('Install Dependencies - Frontend') {
+            steps {
+                dir('task-manager-app') {
+                    bat 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('backend') {
+                    bat 'npm test'
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('task-manager-app') {
+                    bat 'npm run build'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Add deployment steps here (e.g., Docker, AWS, or a server)
+            }
+        }
+    }
+}
